@@ -29,6 +29,67 @@ Types of changes:
 
 ---
 
+## 4.8.0 - 2026-03-13
+
+### Added
+
+- Navigation hotspot support with `onNavigate` callback
+
+---
+
+## 4.7.0
+
+### Added
+
+- ResizeObserver for container resizes
+
+### Fixed
+
+- Hotspot CTA and popover link behavior
+
+---
+
+## 4.6.0
+
+### Added
+
+- Modular zoom system replacing magnifier/pointerZoom
+- `aspectRatio`/`cropAspectRatio`/`cropGravity` to React types and hook deps
+
+### Changed
+
+- Migrate fullscreen from custom modal to native browser Fullscreen API
+
+---
+
+## 4.5.3
+
+### Added
+
+- `cropAspectRatio`/`cropGravity` support
+
+### Fixed
+
+- React prop passthrough for crop params
+
+### Changed
+
+- Extract `buildCropParams` helper to deduplicate crop param logic
+
+---
+
+## 4.5.2
+
+### Added
+
+- `cropAspectRatio`/`cropGravity` support
+
+### Fixed
+
+- React prop passthrough
+
+---
+
 ## 4.4.0 - 2026-02-26
 
 ### Added
