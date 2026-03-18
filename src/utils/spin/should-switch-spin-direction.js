@@ -8,7 +8,11 @@ export const shouldSwitchSpinDirection = ({
   amountY,
   autoplayReverse,
   spinDirection,
+  isGridMode = false,
 }) => {
+  // In grid mode, no direction switching — X and Y advance together via row-scan
+  if (isGridMode) return false;
+
   const reachedEdgeX = activeImageX === (autoplayReverse ? 0 : amountX - 1);
   const reachedEdgeY = activeImageY === (autoplayReverse ? 0 : amountY - 1);
 

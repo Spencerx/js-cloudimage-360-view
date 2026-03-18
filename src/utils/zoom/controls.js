@@ -49,8 +49,13 @@ export const createZoomControls = (container, {
     if (typeof onReset === 'function') onReset();
   });
 
+  // Separator between zoom out and reset
+  const separator = document.createElement('span');
+  separator.className = 'cloudimage-360-zoom-separator';
+
   wrapper.appendChild(btnIn);
   wrapper.appendChild(btnOut);
+  wrapper.appendChild(separator);
   wrapper.appendChild(btnReset);
   container.appendChild(wrapper);
 

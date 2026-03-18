@@ -44,6 +44,7 @@
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [2D Grid Mode](#2d-grid-mode)
 - [React / Next.js](#react--nextjs)
 - [Configuration Options](#configuration-options)
 - [Event Callbacks](#event-callbacks)
@@ -79,6 +80,7 @@ JS Cloudimage 360 View enables you to create stunning, interactive 360-degree pr
 | Feature | Description |
 |---------|-------------|
 | **360° Rotation** | Smooth horizontal and vertical rotation with customizable speed |
+| **2D Grid Mode** | True two-axis viewing for images organized as a horizontal/vertical matrix |
 | **Touch & Drag** | Intuitive mouse and touch controls with inertia/momentum |
 | **Pinch-to-Zoom** | Natural pinch gesture zooming on mobile devices |
 | **Autoplay** | Automatic rotation with configurable behavior and direction |
@@ -215,6 +217,66 @@ const config = {
   amountY: 18,
   autoplayBehavior: 'spin-xy', // Options: 'spin-x', 'spin-y', 'spin-xy', 'spin-yx'
 };
+```
+
+### 2D Grid Mode
+
+For products photographed at multiple horizontal **and** vertical angles, grid mode provides true two-axis viewing. Instead of independent X/Y strips, the displayed image is determined by both axes simultaneously — dragging horizontally changes X, vertically changes Y, and diagonal drags update both.
+
+Grid mode is auto-detected when `filenameGrid` or `imageListGrid` is provided.
+
+**Using a filename pattern:**
+
+```javascript
+CI360.init(document.getElementById('viewer'), {
+  folder: 'https://your-domain.com/images/',
+  filenameGrid: 'product_{indexY}_{indexX}.jpg',
+  amountX: 24,        // horizontal angles
+  amountY: 4,         // vertical angles
+  indexZeroBase: 3,    // zero-pad to 3 digits: 001, 002, ...
+  stopAtEdgesY: true,  // prevent Y from looping
+});
+```
+
+Placeholders `{indexX}` and `{indexY}` are replaced with 1-based indices (respecting `indexZeroBase` for zero-padding). Images are stored internally as a flat array with the formula `imagesGrid[y * amountX + x]`.
+
+**Using an explicit image list:**
+
+```javascript
+CI360.init(document.getElementById('viewer'), {
+  imageListGrid: [
+    // y=0 row (all X frames at first vertical angle)
+    'img_001_001.jpg', 'img_001_002.jpg', /* ... */
+    // y=1 row
+    'img_002_001.jpg', 'img_002_002.jpg', /* ... */
+  ],
+  amountX: 24,
+  amountY: 4,
+});
+```
+
+**Autoplay** works with all four behaviors: `spin-x` (horizontal only), `spin-y` (vertical only), `spin-xy` (row-scan: X advances each tick, Y advances when X wraps), and `spin-yx` (column-scan).
+
+**Per-axis edge stopping** — use `stopAtEdgesX` and `stopAtEdgesY` to control looping independently. This is useful when one axis has full 360° coverage but the other has limited angles:
+
+```javascript
+{
+  stopAtEdgesY: true,  // Y has only 4 angles, don't loop
+  // X loops freely (default)
+}
+```
+
+**React:**
+
+```tsx
+<CI360Viewer
+  folder="https://your-domain.com/images/"
+  filenameGrid="product_{indexY}_{indexX}.jpg"
+  amountX={24}
+  amountY={4}
+  indexZeroBase={3}
+  stopAtEdgesY
+/>
 ```
 
 ---
@@ -401,6 +463,8 @@ All options can be set via JavaScript config or HTML data attributes.
 | `filenameY` | `data-filename-y` | `null` | Filename pattern for Y-axis images |
 | `imageListX` | `data-image-list-x` | `null` | Array of image URLs for X-axis (alternative to folder/filename) |
 | `imageListY` | `data-image-list-y` | `null` | Array of image URLs for Y-axis |
+| `filenameGrid` | `data-filename-grid` | `null` | Filename pattern for 2D grid mode. Uses `{indexX}` and `{indexY}` placeholders |
+| `imageListGrid` | `data-image-list-grid` | `null` | Array of image URLs for 2D grid (flat or 2D array, Y-outer X-inner order) |
 | `amountX` | `data-amount-x` | `0` | Total number of X-axis images |
 | `amountY` | `data-amount-y` | `0` | Total number of Y-axis images |
 | `indexZeroBase` | `data-index-zero-base` | `0` | Starting index for image filenames |
@@ -426,7 +490,9 @@ All options can be set via JavaScript config or HTML data attributes.
 | `dragReverse` | `data-drag-reverse` | `false` | Reverse drag direction |
 | `keys` | `data-keys` | `false` | Enable keyboard arrow navigation |
 | `keysReverse` | `data-keys-reverse` | `false` | Reverse keyboard direction |
-| `stopAtEdges` | `data-stop-at-edges` | `false` | Stop rotation at first/last frame |
+| `stopAtEdges` | `data-stop-at-edges` | `false` | Stop rotation at first/last frame (both axes) |
+| `stopAtEdgesX` | `data-stop-at-edges-x` | `null` | Stop X-axis at edges. Overrides `stopAtEdges` for X when set |
+| `stopAtEdgesY` | `data-stop-at-edges-y` | `null` | Stop Y-axis at edges. Overrides `stopAtEdges` for Y when set |
 | `pinchZoom` | `data-pinch-zoom` | `true` | Enable pinch-to-zoom on touch devices |
 
 ### Display Options

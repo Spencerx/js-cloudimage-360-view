@@ -21,6 +21,8 @@ export const PROPS_REQUIRE_RELOAD = [
   'filenameY',
   'imageListX',
   'imageListY',
+  'filenameGrid',
+  'imageListGrid',
   'indexZeroBase',
   'amountX',
   'amountY',

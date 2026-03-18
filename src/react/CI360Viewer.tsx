@@ -74,8 +74,10 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
     apiVersion,
     filenameX,
     filenameY,
+    filenameGrid,
     imageListX,
     imageListY,
+    imageListGrid,
     indexZeroBase,
     amountX,
     amountY,
@@ -93,6 +95,8 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
     dragSpeed,
     dragReverse,
     stopAtEdges,
+    stopAtEdgesX,
+    stopAtEdgesY,
     inertia,
 
     // UI Features
@@ -149,6 +153,7 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
     onHotspotOpen,
     onHotspotClose,
     onProductClick,
+    onNavigate,
     onError,
 
     ...restProps
@@ -164,8 +169,10 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
       apiVersion,
       filenameX,
       filenameY,
+      filenameGrid,
       imageListX,
       imageListY,
+      imageListGrid,
       indexZeroBase,
       amountX,
       amountY,
@@ -183,6 +190,8 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
       dragSpeed,
       dragReverse,
       stopAtEdges,
+    stopAtEdgesX,
+    stopAtEdgesY,
       inertia,
 
       // UI Features
@@ -239,6 +248,7 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
       onHotspotOpen,
       onHotspotClose,
       onProductClick,
+      onNavigate,
       onError,
     }),
     [
@@ -247,8 +257,10 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
       apiVersion,
       filenameX,
       filenameY,
+      filenameGrid,
       imageListX,
       imageListY,
+      imageListGrid,
       indexZeroBase,
       amountX,
       amountY,
@@ -266,6 +278,8 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
       dragSpeed,
       dragReverse,
       stopAtEdges,
+    stopAtEdgesX,
+    stopAtEdgesY,
       inertia,
 
       // UI Features
@@ -322,6 +336,7 @@ const CI360ViewerComponent: ForwardRefRenderFunction<
       onHotspotOpen,
       onHotspotClose,
       onProductClick,
+      onNavigate,
       onError,
     ]
   );

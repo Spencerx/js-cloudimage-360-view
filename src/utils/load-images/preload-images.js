@@ -1,5 +1,5 @@
 import { ORIENTATIONS } from '../constants';
-import { generateImagesCdnLinks } from './generate-images-cdn-links';
+import { generateImagesCdnLinks, generateGridImagesCdnLinks } from './generate-images-cdn-links';
 import { loadImages } from './load-images';
 
 export const preloadImages = ({
@@ -88,4 +88,32 @@ export const preloadImages = ({
   if (!loadX && !loadY) {
     handleAllImagesLoaded();
   }
+};
+
+export const preloadGridImages = ({
+  cdnPath,
+  config,
+  onFirstImageLoad,
+  onImageLoad,
+  onAllImagesLoad,
+  onError,
+}) => {
+  const imageList = config.imageList && config.imageList.length
+    ? config.imageList
+    : generateGridImagesCdnLinks(cdnPath, config);
+
+  loadImages({
+    imagesUrls: imageList,
+    onFirstImageLoad,
+    onImageLoad: (imageData, index) => {
+      onImageLoad?.(imageData, index);
+    },
+    onAllImagesLoad: (loadedImages, stats) => {
+      onAllImagesLoad?.(loadedImages, stats);
+    },
+    onError: (errorInfo) => {
+      onError?.(errorInfo);
+    },
+    autoplayReverse: config.autoplayReverse,
+  });
 };

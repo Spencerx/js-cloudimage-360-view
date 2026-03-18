@@ -6,6 +6,7 @@ import './static/css/hotspots.css';
 import {
   generateCdnPath,
   preloadImages,
+  preloadGridImages,
   createFullscreenIcon,
   createLoader,
   createInnerBox,
@@ -65,6 +66,8 @@ class CI360Viewer {
     this.isClicked = false;
     this.imagesX = [];
     this.imagesY = [];
+    this.imagesGrid = [];
+    this.isGridMode = false;
     // Cap DPR on mobile to reduce canvas memory usage
     // Mobile devices with dPR 3 can create canvases 3x larger than needed
     const rawDpr = Math.round(window.devicePixelRatio || 1);
@@ -318,6 +321,21 @@ class CI360Viewer {
   }
 
   loadHigherQualityImages(width, onLoad) {
+    if (this.isGridMode) {
+      const cdnPathGrid = generateCdnPath(this.srcGridConfig, width);
+      preloadGridImages({
+        cdnPath: cdnPathGrid,
+        config: this.srcGridConfig,
+        onAllImagesLoad: (loadedImages) => {
+          this.closeImageBitmaps(this.imagesGrid);
+          this.imagesGrid = loadedImages;
+          onLoad();
+        },
+        onError: (errorInfo) => this.emit('onError', errorInfo),
+      });
+      return;
+    }
+
     const cdnPathX = generateCdnPath(this.srcXConfig, width);
     const cdnPathY = this.allowSpinY ? generateCdnPath(this.srcYConfig, width) : null;
 
@@ -647,27 +665,28 @@ class CI360Viewer {
   }
 
   moveActiveXIndexUp(itemsSkipped) {
-    this.orientation = ORIENTATIONS.X;
+    if (!this.isGridMode) this.orientation = ORIENTATIONS.X;
     this.activeImageX = (this.activeImageX + itemsSkipped) % this.amountX;
   }
 
   moveActiveXIndexDown(itemsSkipped) {
-    this.orientation = ORIENTATIONS.X;
+    if (!this.isGridMode) this.orientation = ORIENTATIONS.X;
     this.activeImageX = (this.activeImageX - itemsSkipped + this.amountX) % this.amountX;
   }
 
   moveActiveYIndexUp(itemsSkipped) {
-    this.orientation = ORIENTATIONS.Y;
+    if (!this.isGridMode) this.orientation = ORIENTATIONS.Y;
     this.activeImageY = (this.activeImageY + itemsSkipped) % this.amountY;
   }
 
   moveActiveYIndexDown(itemsSkipped) {
-    this.orientation = ORIENTATIONS.Y;
+    if (!this.isGridMode) this.orientation = ORIENTATIONS.Y;
     this.activeImageY = (this.activeImageY - itemsSkipped + this.amountY) % this.amountY;
   }
 
   moveRight(stopAtEdges, itemsSkippedX = 1) {
-    if (stopAtEdges && this.activeImageX >= this.imagesX.length - 1) return;
+    const maxX = this.isGridMode ? this.amountX - 1 : this.imagesX.length - 1;
+    if (stopAtEdges && this.activeImageX >= maxX) return;
 
     this.moveActiveXIndexUp(itemsSkippedX);
     if (!this.isZoomed) this.updateView();
@@ -681,7 +700,8 @@ class CI360Viewer {
   }
 
   moveTop(stopAtEdges, itemsSkippedY = 1) {
-    if (stopAtEdges && this.activeImageY >= this.imagesY.length - 1) return;
+    const maxY = this.isGridMode ? this.amountY - 1 : this.imagesY.length - 1;
+    if (stopAtEdges && this.activeImageY >= maxY) return;
 
     this.moveActiveYIndexUp(itemsSkippedY);
     if (!this.isZoomed) this.updateView();
@@ -696,13 +716,13 @@ class CI360Viewer {
 
   onMoveHandler(movingDirection, itemsSkippedX = 1, itemsSkippedY = 1) {
     if (movingDirection === 'right') {
-      this.moveRight(this.stopAtEdges, itemsSkippedX);
+      this.moveRight(this.stopAtEdgesX, itemsSkippedX);
     } else if (movingDirection === 'left') {
-      this.moveLeft(this.stopAtEdges, itemsSkippedX);
+      this.moveLeft(this.stopAtEdgesX, itemsSkippedX);
     } else if (movingDirection === 'up') {
-      this.moveTop(this.stopAtEdges, itemsSkippedY);
+      this.moveTop(this.stopAtEdgesY, itemsSkippedY);
     } else if (movingDirection === 'down') {
-      this.moveBottom(this.stopAtEdges, itemsSkippedY);
+      this.moveBottom(this.stopAtEdgesY, itemsSkippedY);
     }
 
     this.emit('onSpin', {
@@ -711,21 +731,32 @@ class CI360Viewer {
       activeImageY: this.activeImageY,
       amountX: this.amountX,
       amountY: this.amountY,
+      isGridMode: this.isGridMode,
     });
   }
 
   updateView(zoomScale, offsetX, offsetY) {
-    const activeIndex = this.orientation === ORIENTATIONS.X ? this.activeImageX : this.activeImageY;
+    let imageData;
 
-    const imageData =
-      this.orientation === ORIENTATIONS.X ? this.imagesX[this.activeImageX] : this.imagesY[this.activeImageY];
-
-    if (this.hotspotsInstance && !this.isZoomed && !this.autoplay) {
-      this.hotspotsInstance.updateHotspotPosition(activeIndex, this.orientation);
+    if (this.isGridMode) {
+      const flatIndex = this.activeImageY * this.amountX + this.activeImageX;
+      imageData = this.imagesGrid[flatIndex];
+    } else {
+      imageData = this.orientation === ORIENTATIONS.X
+        ? this.imagesX[this.activeImageX]
+        : this.imagesY[this.activeImageY];
     }
 
-    // Update timeline indicator position
-    if (this.hotspotTimelineIndicator && this.orientation === ORIENTATIONS.X) {
+    const activeIndex = this.isGridMode
+      ? (this.activeImageY * this.amountX + this.activeImageX)
+      : (this.orientation === ORIENTATIONS.X ? this.activeImageX : this.activeImageY);
+
+    if (this.hotspotsInstance && !this.isZoomed && !this.autoplay) {
+      this.hotspotsInstance.updateHotspotPosition(activeIndex, this.isGridMode ? 'grid' : this.orientation);
+    }
+
+    // Update timeline indicator position (X-axis based for timeline)
+    if (this.hotspotTimelineIndicator && (this.isGridMode || this.orientation === ORIENTATIONS.X)) {
       this.updateHotspotTimelinePosition();
     }
 
@@ -778,7 +809,9 @@ class CI360Viewer {
   }
 
   pushImageToSet(image, index, orientation) {
-    if (orientation === ORIENTATIONS.X) {
+    if (orientation === 'grid') {
+      this.imagesGrid[index] = image;
+    } else if (orientation === ORIENTATIONS.X) {
       this.imagesX[index] = image;
     } else {
       this.imagesY[index] = image;
@@ -786,8 +819,13 @@ class CI360Viewer {
   }
 
   calculatePercentage() {
+    if (this.isGridMode) {
+      const totalAmount = this.amountX * this.amountY;
+      const totalLoaded = this.imagesGrid.filter(Boolean).length;
+      return Math.round((totalLoaded / totalAmount) * 100);
+    }
     const totalAmount = this.amountX + this.amountY;
-    const totalLoadedImages = this.imagesX.length + this.imagesY.length;
+    const totalLoadedImages = this.imagesX.filter(Boolean).length + this.imagesY.filter(Boolean).length;
     return Math.round((totalLoadedImages / totalAmount) * 100);
   }
 
@@ -820,8 +858,16 @@ class CI360Viewer {
       lastWidth = newWidth;
 
       requestAnimationFrame(() => {
-        if (this.imagesX.length > 0) {
-          this.adaptCanvasSize(this.imagesX[this.activeImageX]);
+        let currentImage;
+        if (this.isGridMode) {
+          currentImage = this.imagesGrid[this.activeImageY * this.amountX + this.activeImageX];
+        } else if (this.orientation === ORIENTATIONS.Y && this.imagesY.length > 0) {
+          currentImage = this.imagesY[this.activeImageY];
+        } else {
+          currentImage = this.imagesX[this.activeImageX];
+        }
+        if (currentImage) {
+          this.adaptCanvasSize(currentImage);
 
           if (this.zoomPan) {
             const dims = this.getDrawDimensions();
@@ -841,8 +887,10 @@ class CI360Viewer {
     this.addAllIcons();
 
     this.isReady = true;
-    this.amountX = this.imagesX.length;
-    this.amountY = this.imagesY.length;
+    if (!this.isGridMode) {
+      this.amountX = this.imagesX.length;
+      this.amountY = this.imagesY.length;
+    }
     this.activeImageX = this.autoplayReverse ? this.amountX - 1 : 0;
     this.activeImageY = this.autoplayReverse ? this.amountY - 1 : 0;
 
@@ -861,12 +909,20 @@ class CI360Viewer {
         this.hotspotsInstance.hideHotspots();
         this.hideHotspotTimeline();
       } else {
-        this.hotspotsInstance.updateHotspotPosition(this.activeImageX, this.orientation);
+        const hotspotIndex = this.isGridMode
+          ? (this.activeImageY * this.amountX + this.activeImageX)
+          : this.activeImageX;
+        const hotspotOrientation = this.isGridMode ? 'grid' : this.orientation;
+        this.hotspotsInstance.updateHotspotPosition(hotspotIndex, hotspotOrientation);
         this.showHotspotTimeline();
       }
     }
 
-    this.emit('onLoad', { imagesX: this.imagesX.length, imagesY: this.imagesY.length });
+    this.emit('onLoad', {
+      imagesX: this.isGridMode ? this.amountX : this.imagesX.length,
+      imagesY: this.isGridMode ? this.amountY : this.imagesY.length,
+      ...(this.isGridMode && { imagesGrid: this.imagesGrid.filter(Boolean).length }),
+    });
     this.emit('onReady');
     this.announce('360 degree view loaded. Use mouse drag or arrow keys to rotate.');
 
@@ -928,7 +984,16 @@ class CI360Viewer {
     this.hide360ViewCircleIcon();
     this.emit('onAutoplayStart');
 
-    const autoplaySpeed = (this.speed * 36) / (this.amountX + this.amountY);
+    let autoplayFrameCount;
+    if (this.isGridMode) {
+      const behavior = this.autoplayBehavior;
+      if (behavior === 'spin-x') autoplayFrameCount = this.amountX;
+      else if (behavior === 'spin-y') autoplayFrameCount = this.amountY;
+      else autoplayFrameCount = Math.max(this.amountX, this.amountY);
+    } else {
+      autoplayFrameCount = this.amountX + this.amountY;
+    }
+    const autoplaySpeed = (this.speed * 36) / autoplayFrameCount;
     const loopTriggers = {
       left: this.moveLeft.bind(this),
       right: this.moveRight.bind(this),
@@ -946,10 +1011,16 @@ class CI360Viewer {
           amountX: this.amountX,
           amountY: this.amountY,
           autoplayReverse: this.autoplayReverse,
+          isGridMode: this.isGridMode,
         });
 
       if (completedOneCycle) {
         this.stopAutoplay();
+        return;
+      }
+
+      if (this.isGridMode) {
+        this.gridAutoplayTick(loopTriggers);
         return;
       }
 
@@ -978,17 +1049,98 @@ class CI360Viewer {
     }, autoplaySpeed);
   }
 
+  gridAutoplayTick(loopTriggers) {
+    const reversed = this.autoplayReverse;
+    const behavior = this.autoplayBehavior;
+
+    if (behavior === 'spin-x') {
+      if (reversed) { loopTriggers.left(); } else { loopTriggers.right(); }
+      return;
+    }
+
+    if (behavior === 'spin-y') {
+      if (reversed) { loopTriggers.bottom(); } else { loopTriggers.top(); }
+      return;
+    }
+
+    // spin-xy: advance X each tick, when X wraps also advance Y (row-scan)
+    // Manipulate indices directly to avoid double updateView() calls
+    if (behavior === 'spin-xy') {
+      const xEdge = reversed ? 0 : this.amountX - 1;
+      const atXEdge = this.activeImageX === xEdge;
+
+      if (reversed) {
+        this.activeImageX = (this.activeImageX - 1 + this.amountX) % this.amountX;
+      } else {
+        this.activeImageX = (this.activeImageX + 1) % this.amountX;
+      }
+
+      if (atXEdge) {
+        if (reversed) {
+          this.activeImageY = (this.activeImageY - 1 + this.amountY) % this.amountY;
+        } else {
+          this.activeImageY = (this.activeImageY + 1) % this.amountY;
+        }
+      }
+
+      if (!this.isZoomed) this.updateView();
+      this.emit('onSpin', {
+        direction: reversed ? 'left' : 'right',
+        activeImageX: this.activeImageX,
+        activeImageY: this.activeImageY,
+        amountX: this.amountX,
+        amountY: this.amountY,
+        isGridMode: true,
+      });
+      return;
+    }
+
+    // spin-yx: advance Y each tick, when Y wraps also advance X (column-scan)
+    if (behavior === 'spin-yx') {
+      const yEdge = reversed ? 0 : this.amountY - 1;
+      const atYEdge = this.activeImageY === yEdge;
+
+      if (reversed) {
+        this.activeImageY = (this.activeImageY - 1 + this.amountY) % this.amountY;
+      } else {
+        this.activeImageY = (this.activeImageY + 1) % this.amountY;
+      }
+
+      if (atYEdge) {
+        if (reversed) {
+          this.activeImageX = (this.activeImageX - 1 + this.amountX) % this.amountX;
+        } else {
+          this.activeImageX = (this.activeImageX + 1) % this.amountX;
+        }
+      }
+
+      if (!this.isZoomed) this.updateView();
+      this.emit('onSpin', {
+        direction: reversed ? 'down' : 'up',
+        activeImageX: this.activeImageX,
+        activeImageY: this.activeImageY,
+        amountX: this.amountX,
+        amountY: this.amountY,
+        isGridMode: true,
+      });
+    }
+  }
+
   stopAutoplay() {
     this.showAllIcons();
     this.autoplay = false;
 
-    window.clearTimeout(this.loopTimeoutId);
+    window.clearInterval(this.loopTimeoutId);
     this.loopTimeoutId = null;
     this.emit('onAutoplayStop');
 
     // Show hotspots and timeline after autoplay stops
     if (this.hotspotsInstance) {
-      this.hotspotsInstance.updateHotspotPosition(this.activeImageX, this.orientation);
+      const hotspotIndex = this.isGridMode
+        ? (this.activeImageY * this.amountX + this.activeImageX)
+        : this.activeImageX;
+      const hotspotOrientation = this.isGridMode ? 'grid' : this.orientation;
+      this.hotspotsInstance.updateHotspotPosition(hotspotIndex, hotspotOrientation);
       this.showHotspotTimeline();
     }
 
@@ -1026,8 +1178,12 @@ class CI360Viewer {
     // Close all ImageBitmap objects to free GPU memory
     this.closeImageBitmaps(this.imagesX);
     this.closeImageBitmaps(this.imagesY);
+    this.closeImageBitmaps(this.imagesGrid);
     this.imagesX = [];
     this.imagesY = [];
+    this.imagesGrid = [];
+    this.isGridMode = false;
+    this.isReady = false;
 
     // Disconnect container resize observer
     if (this.resizeObserver) {
@@ -1086,8 +1242,10 @@ class CI360Viewer {
     // Close all ImageBitmap objects to free GPU memory
     this.closeImageBitmaps(this.imagesX);
     this.closeImageBitmaps(this.imagesY);
+    this.closeImageBitmaps(this.imagesGrid);
     this.imagesX = [];
     this.imagesY = [];
+    this.imagesGrid = [];
     this.isMemoryReleased = true;
   }
 
@@ -1195,7 +1353,8 @@ class CI360Viewer {
     if (!this.hotspots || this.hotspotTimeline) return;
 
     // Append to innerBox so it overlays the bottom of the image
-    const timelineData = createHotspotTimeline(this.innerBox, this.amountX, this.hotspots);
+    const timelineFrameCount = this.isGridMode ? (this.amountX * this.amountY) : this.amountX;
+    const timelineData = createHotspotTimeline(this.innerBox, timelineFrameCount, this.hotspots);
     if (!timelineData) return;
 
     this.hotspotTimeline = timelineData.element;
@@ -1231,7 +1390,12 @@ class CI360Viewer {
   }
 
   updateHotspotTimelinePosition() {
-    updateTimelineIndicator(this.hotspotTimelineIndicator, this.activeImageX, this.amountX);
+    if (this.isGridMode) {
+      const flatIndex = this.activeImageY * this.amountX + this.activeImageX;
+      updateTimelineIndicator(this.hotspotTimelineIndicator, flatIndex, this.amountX * this.amountY);
+    } else {
+      updateTimelineIndicator(this.hotspotTimelineIndicator, this.activeImageX, this.amountX);
+    }
   }
 
   /**
@@ -1245,9 +1409,13 @@ class CI360Viewer {
       this.hotspotsInstance.hidePopper();
     }
 
-    if (this.isAnimatingToFrame || targetFrame === this.activeImageX) {
+    const currentFlatIndex = this.isGridMode
+      ? (this.activeImageY * this.amountX + this.activeImageX)
+      : this.activeImageX;
+
+    if (this.isAnimatingToFrame || targetFrame === currentFlatIndex) {
       // If already at the target frame, just show the hotspot if requested
-      if (targetFrame === this.activeImageX && hotspotId && this.hotspotsInstance && this.hotspotTimelineOnClick) {
+      if (targetFrame === currentFlatIndex && hotspotId && this.hotspotsInstance && this.hotspotTimelineOnClick) {
         this.hotspotsInstance.showHotspotById(hotspotId);
       }
       return;
@@ -1266,6 +1434,30 @@ class CI360Viewer {
     if (this.inertiaAnimationId) {
       cancelAnimationFrame(this.inertiaAnimationId);
       this.inertiaAnimationId = null;
+    }
+
+    // In grid mode, jump directly to target (x, y) position
+    if (this.isGridMode) {
+      const totalFrames = this.amountX * this.amountY;
+      const clampedTarget = Math.max(0, Math.min(targetFrame, totalFrames - 1));
+      this.activeImageY = Math.floor(clampedTarget / this.amountX);
+      this.activeImageX = clampedTarget % this.amountX;
+      if (!this.isZoomed) this.updateView();
+      this.emit('onSpin', {
+        direction: clampedTarget > currentFlatIndex ? 'right' : 'left',
+        activeImageX: this.activeImageX,
+        activeImageY: this.activeImageY,
+        amountX: this.amountX,
+        amountY: this.amountY,
+        isGridMode: true,
+      });
+      this.isAnimatingToFrame = false;
+      if (hotspotId && this.hotspotsInstance && this.hotspotTimelineOnClick) {
+        setTimeout(() => {
+          this.hotspotsInstance.showHotspotById(hotspotId);
+        }, 50);
+      }
+      return;
     }
 
     // Calculate shortest path (forward vs backward with wrap)
@@ -1509,6 +1701,27 @@ class CI360Viewer {
     this.isZoomed = false;
     this.highResLoaded = false;
 
+    // Clean up hotspot instance and timeline before re-creating
+    if (this.hotspotsInstance) {
+      this.hotspotsInstance.destroy();
+      this.hotspotsInstance = null;
+    }
+    if (this.hotspotTimeline && this.hotspotTimeline.parentNode) {
+      this.hotspotTimeline.parentNode.removeChild(this.hotspotTimeline);
+      this.hotspotTimeline = null;
+      this.hotspotTimelineIndicator = null;
+    }
+    if (this.innerBox) {
+      this.innerBox.classList.remove('has-hotspot-timeline');
+    }
+
+    // Clean up hints overlay
+    if (this.hintsOverlay && this.hintsOverlay.parentNode) {
+      this.hintsOverlay.parentNode.removeChild(this.hintsOverlay);
+      this.hintsOverlay = null;
+    }
+    this.hintsHidden = false;
+
     removeElementFromContainer(this.innerBox, '.cloudimage-360-icons-container');
     this.init(this.container, newConfig, true);
     this.iconsContainer = createIconsContainer(this.innerBox);
@@ -1523,8 +1736,10 @@ class CI360Viewer {
       apiVersion,
       filenameX,
       filenameY,
+      filenameGrid,
       imageListX,
       imageListY,
+      imageListGrid,
       indexZeroBase,
       amountX,
       amountY,
@@ -1552,6 +1767,8 @@ class CI360Viewer {
       lazyload,
       dragSpeed,
       stopAtEdges,
+      stopAtEdgesX,
+      stopAtEdgesY,
       imageInfo = 'black',
       initialIconShown,
       bottomCircle,
@@ -1593,6 +1810,15 @@ class CI360Viewer {
     const parsedImagesListX = safeJsonParse(imageListX, []);
     const parsedImagesListY = safeJsonParse(imageListY, []);
 
+    // Parse grid image list (flatten if 2D array)
+    let parsedImageListGrid = safeJsonParse(imageListGrid, []);
+    if (parsedImageListGrid.length && Array.isArray(parsedImageListGrid[0])) {
+      parsedImageListGrid = parsedImageListGrid.flat();
+    }
+
+    // Detect grid mode
+    this.isGridMode = !!(filenameGrid || parsedImageListGrid.length);
+
     // Backward compatibility: pointerZoom > 0 maps to zoomMax if not explicitly set
     const effectiveZoomMax = (adaptedConfig.zoomMax === 5 && pointerZoom > 1)
       ? Math.min(pointerZoom, 5)
@@ -1603,6 +1829,12 @@ class CI360Viewer {
     this.amountY = parsedImagesListY.length || amountY;
     this.allowSpinX = !!this.amountX;
     this.allowSpinY = !!this.amountY;
+
+    // In grid mode, both axes are always active
+    if (this.isGridMode) {
+      this.allowSpinX = true;
+      this.allowSpinY = true;
+    }
     this.orientation = this.allowSpinX ? ORIENTATIONS.X : ORIENTATIONS.Y;
     this.activeImageX = autoplayReverse ? this.amountX - 1 : 0;
     this.activeImageY = autoplayReverse ? this.amountY - 1 : 0;
@@ -1620,6 +1852,8 @@ class CI360Viewer {
     this.scrollHint = scrollHint ?? true;
     this.dragSpeed = Math.max(dragSpeed, MIN_DRAG_SPEED);
     this.stopAtEdges = stopAtEdges;
+    this.stopAtEdgesX = stopAtEdgesX ?? stopAtEdges;
+    this.stopAtEdgesY = stopAtEdgesY ?? stopAtEdges;
     this.ciParams = ciParams;
     this.apiVersion = apiVersion;
     this.keysReverse = keysReverse;
@@ -1702,34 +1936,77 @@ class CI360Viewer {
       amount: this.amountY,
     };
 
+    this.srcGridConfig = {
+      folder,
+      filename: filenameGrid,
+      imageList: parsedImageListGrid,
+      container,
+      innerBox: this.innerBox,
+      apiVersion,
+      ciParams,
+      lazyload,
+      amount: this.amountX * this.amountY,
+      amountX: this.amountX,
+      amountY: this.amountY,
+      indexZeroBase,
+      autoplayReverse,
+    };
+
     if (update) this.removeEvents();
     this.attachEvents(draggable, swipeable, keys);
 
     if (update) return;
 
     const width = this.container.offsetWidth;
-    const cdnPathX =
-      this.allowSpinX && !parsedImagesListX.length ? generateCdnPath(this.srcXConfig, width) : null;
-    const cdnPathY =
-      this.allowSpinY && !parsedImagesListY.length ? generateCdnPath(this.srcYConfig, width) : null;
 
-    const loadCallback = (event) => {
-      preloadImages({
-        cdnPathX,
-        cdnPathY,
-        configX: this.srcXConfig,
-        configY: this.srcYConfig,
-        onImageLoad: (image, index, orientation) => this.onImageLoad(image, index, orientation),
-        onFirstImageLoad: (imageData) => this.onFirstImageLoaded(event, imageData),
-        onAllImagesLoad: this.onAllImagesLoaded.bind(this),
-        onError: (errorInfo) => this.emit('onError', errorInfo),
-      });
-    };
+    if (this.isGridMode) {
+      const cdnPathGrid = !parsedImageListGrid.length ? generateCdnPath(this.srcGridConfig, width) : null;
 
-    if (this.allowSpinX) {
-      initLazyload(cdnPathX, this.srcXConfig, loadCallback);
-    } else if (this.allowSpinY) {
-      initLazyload(cdnPathY, this.srcYConfig, loadCallback);
+      const loadCallback = (event) => {
+        preloadGridImages({
+          cdnPath: cdnPathGrid,
+          config: this.srcGridConfig,
+          onImageLoad: (imageData, index) => {
+            this.pushImageToSet(imageData, index, 'grid');
+            this.updatePercentageInLoader(this.calculatePercentage());
+          },
+          onFirstImageLoad: (imageData) => this.onFirstImageLoaded(event, imageData),
+          onAllImagesLoad: (loadedImages, stats) => {
+            this.imagesGrid = loadedImages;
+            if (stats && stats.errorCount > 0) {
+              this.emit('onError', { errorCount: stats.errorCount, errors: stats.errors, totalImages: this.amountX * this.amountY });
+            }
+            this.onAllImagesLoaded();
+          },
+          onError: (errorInfo) => this.emit('onError', errorInfo),
+        });
+      };
+
+      initLazyload(cdnPathGrid, this.srcGridConfig, loadCallback);
+    } else {
+      const cdnPathX =
+        this.allowSpinX && !parsedImagesListX.length ? generateCdnPath(this.srcXConfig, width) : null;
+      const cdnPathY =
+        this.allowSpinY && !parsedImagesListY.length ? generateCdnPath(this.srcYConfig, width) : null;
+
+      const loadCallback = (event) => {
+        preloadImages({
+          cdnPathX,
+          cdnPathY,
+          configX: this.srcXConfig,
+          configY: this.srcYConfig,
+          onImageLoad: (image, index, orientation) => this.onImageLoad(image, index, orientation),
+          onFirstImageLoad: (imageData) => this.onFirstImageLoaded(event, imageData),
+          onAllImagesLoad: this.onAllImagesLoaded.bind(this),
+          onError: (errorInfo) => this.emit('onError', errorInfo),
+        });
+      };
+
+      if (this.allowSpinX) {
+        initLazyload(cdnPathX, this.srcXConfig, loadCallback);
+      } else if (this.allowSpinY) {
+        initLazyload(cdnPathY, this.srcYConfig, loadCallback);
+      }
     }
   }
 }

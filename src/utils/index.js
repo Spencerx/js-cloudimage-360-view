@@ -3,7 +3,7 @@ export { generateCdnPath } from './image-src/generate-cdn-path';
 export { generateHighPreviewCdnUrl } from './image-src/generate-high-preview-cdn-url';
 export { addOrUpdateParam } from './image-src/add-or-update-param';
 
-export { preloadImages } from './load-images/preload-images';
+export { preloadImages, preloadGridImages } from './load-images/preload-images';
 export { initLazyload } from './load-images/lazyload/init-lazyload';
 export { loadImage } from './load-images/load-image';
 

@@ -4,9 +4,12 @@ import { sanitizeHtml } from './sanitize-html';
 const adaptOrientation = (orientation) => (orientation === 'y' ? ORIENTATIONS.Y : ORIENTATIONS.X);
 
 export const findHotspotsForFrame = (hotspots, currentFrame, orientation) => {
-  return hotspots.filter(
-    (hotspot) => adaptOrientation(hotspot.orientation) === orientation && currentFrame in hotspot.positions
-  );
+  return hotspots.filter((hotspot) => {
+    if (!(currentFrame in hotspot.positions)) return false;
+    // In grid mode, show all hotspots matching the flat index regardless of orientation
+    if (orientation === 'grid') return true;
+    return adaptOrientation(hotspot.orientation) === orientation;
+  });
 };
 
 export const createHotspotElement = (id, label, markerStyle) => {

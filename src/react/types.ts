@@ -100,6 +100,7 @@ export interface SpinEventData {
   activeImageY: number;
   amountX: number;
   amountY: number;
+  isGridMode: boolean;
 }
 
 /**
@@ -109,6 +110,7 @@ export interface LoadEventData {
   viewerId: string;
   imagesX: number;
   imagesY: number;
+  imagesGrid?: number;
 }
 
 /**
@@ -148,6 +150,8 @@ export interface CI360Config {
   filenameY?: string | null;
   imageListX?: string | string[] | null;
   imageListY?: string | string[] | null;
+  filenameGrid?: string | null;
+  imageListGrid?: string | string[] | string[][] | null;
   indexZeroBase?: number;
   amountX?: number;
   amountY?: number;
@@ -165,6 +169,8 @@ export interface CI360Config {
   dragSpeed?: number;
   dragReverse?: boolean;
   stopAtEdges?: boolean;
+  stopAtEdgesX?: boolean | null;
+  stopAtEdgesY?: boolean | null;
   inertia?: boolean;
 
   // UI Features
@@ -275,6 +281,7 @@ export interface CI360ViewerInstance {
   amountX: number;
   amountY: number;
   isZoomed: boolean;
+  isGridMode: boolean;
   viewerConfig: CI360Config;
 }
 

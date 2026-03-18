@@ -657,6 +657,109 @@ body {
   grid-row: 1 / 3;
 }
 
+/* ── 2D Grid Section ──────────────────────────── */
+.demo-grid-2d-viewer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.demo-grid-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--sf-light-border);
+}
+
+.demo-grid-tab {
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--sf-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 200ms;
+}
+
+.demo-grid-tab:hover {
+  color: var(--sf-text-secondary);
+}
+
+.demo-grid-tab.active {
+  color: var(--sf-primary);
+  border-bottom-color: var(--sf-primary);
+}
+
+.demo-grid-panel {
+  display: none;
+}
+
+.demo-grid-panel.active {
+  display: block;
+}
+
+.demo-grid-2d-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-top: 12px;
+  background: var(--sf-dark);
+  border-radius: var(--sf-radius-xs);
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.demo-grid-2d-info span:first-child {
+  color: var(--sf-accent);
+  font-weight: 600;
+}
+
+.demo-grid-code-wrapper {
+  position: relative;
+}
+
+.demo-grid-code-wrapper pre {
+  margin: 0;
+  padding: 24px;
+  background: var(--sf-dark);
+  border-radius: 0 0 var(--sf-radius) var(--sf-radius);
+  overflow-x: auto;
+}
+
+.demo-grid-code-wrapper code {
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre;
+}
+
+.demo-grid-copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--sf-radius-xs);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 200ms;
+  z-index: 2;
+}
+
+.demo-grid-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 /* ── Programmatic Section ──────────────────────── */
 .demo-programmatic {
   display: grid;

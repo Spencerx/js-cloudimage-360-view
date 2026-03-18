@@ -9,6 +9,8 @@ const DEFAULTS_VALUES = {
   filenameY: null,
   imageListX: null,
   imageListY: null,
+  filenameGrid: null,
+  imageListGrid: null,
   indexZeroBase: 0,
   amountX: 0,
   amountY: 0,
@@ -39,6 +41,8 @@ const DEFAULTS_VALUES = {
   lazyload: true,
   dragReverse: false,
   stopAtEdges: false,
+  stopAtEdgesX: null,
+  stopAtEdgesY: null,
   imageInfo: false,
   initialIconShown: true,
   hotspots: null,
@@ -81,6 +85,8 @@ const getConfigFromImage = (image) => ({
   filenameY: getAttr(image, 'filename-y', DEFAULTS_VALUES.filenameY),
   imageListX: getAttr(image, 'image-list-x', DEFAULTS_VALUES.imageListX),
   imageListY: getAttr(image, 'image-list-y', DEFAULTS_VALUES.imageListY),
+  filenameGrid: getAttr(image, 'filename-grid', DEFAULTS_VALUES.filenameGrid),
+  imageListGrid: getAttr(image, 'image-list-grid', DEFAULTS_VALUES.imageListGrid),
   indexZeroBase: parseInt(getAttr(image, 'index-zero-base', DEFAULTS_VALUES.indexZeroBase), 10),
   amountX: parseInt(getAttr(image, 'amount-x', DEFAULTS_VALUES.amountX), 10),
   amountY: parseInt(getAttr(image, 'amount-y', DEFAULTS_VALUES.amountY), 10),
@@ -113,6 +119,8 @@ const getConfigFromImage = (image) => ({
   lazyload: isTrue(image, 'lazyload', DEFAULTS_VALUES.lazyload),
   dragReverse: isTrue(image, 'drag-reverse', DEFAULTS_VALUES.dragReverse),
   stopAtEdges: isTrue(image, 'stop-at-edges', DEFAULTS_VALUES.stopAtEdges),
+  stopAtEdgesX: getAttr(image, 'stop-at-edges-x', null) !== null ? isTrue(image, 'stop-at-edges-x', null) : null,
+  stopAtEdgesY: getAttr(image, 'stop-at-edges-y', null) !== null ? isTrue(image, 'stop-at-edges-y', null) : null,
   imageInfo: isTrue(image, 'info', DEFAULTS_VALUES.imageInfo),
   initialIconShown: !isFalse(image, 'initial-icon'),
   bottomCircle: !isFalse(image, 'bottom-circle'),
@@ -158,11 +166,26 @@ const validateConfig = (config) => {
   }
 
   // Validate required combinations
-  if (!config.folder && !config.imageListX && !config.imageListY) {
+  const isGridMode = !!(config.filenameGrid || config.imageListGrid);
+  if (!isGridMode && !config.folder && !config.imageListX && !config.imageListY) {
     warnings.push('Either folder or imageListX/imageListY is required');
   }
-  if (config.folder && !config.amountX && !config.imageListX) {
+  if (!isGridMode && config.folder && !config.amountX && !config.imageListX) {
     warnings.push('amountX is required when using folder (unless imageListX is provided)');
+  }
+
+  // Validate grid mode requirements
+  if (config.filenameGrid && (!config.amountX || config.amountX <= 0 || !config.amountY || config.amountY <= 0)) {
+    warnings.push('filenameGrid requires both amountX > 0 and amountY > 0');
+  }
+  if (config.imageListGrid) {
+    if (!config.amountX || config.amountX <= 0 || !config.amountY || config.amountY <= 0) {
+      warnings.push('imageListGrid requires both amountX > 0 and amountY > 0');
+    }
+    const gridList = Array.isArray(config.imageListGrid) ? config.imageListGrid.flat() : [];
+    if (gridList.length && config.amountX && config.amountY && gridList.length !== config.amountX * config.amountY) {
+      warnings.push(`imageListGrid length (${gridList.length}) does not match amountX * amountY (${config.amountX * config.amountY})`);
+    }
   }
 
   // Validate autoplayBehavior values
@@ -189,6 +212,8 @@ const adaptConfig = (config) => {
     filenameY: config.filenameY || DEFAULTS_VALUES.filenameY,
     imageListX: config.imageListX || DEFAULTS_VALUES.imageListX,
     imageListY: config.imageListY || DEFAULTS_VALUES.imageListY,
+    filenameGrid: config.filenameGrid || DEFAULTS_VALUES.filenameGrid,
+    imageListGrid: config.imageListGrid || DEFAULTS_VALUES.imageListGrid,
     indexZeroBase: parseInt(config.indexZeroBase ?? DEFAULTS_VALUES.indexZeroBase, 10),
     amountX: parseInt(config.amountX ?? DEFAULTS_VALUES.amountX, 10),
     amountY: parseInt(config.amountY ?? DEFAULTS_VALUES.amountY, 10),
@@ -218,6 +243,8 @@ const adaptConfig = (config) => {
     lazyload: config.lazyload ?? DEFAULTS_VALUES.lazyload,
     dragReverse: config.dragReverse ?? DEFAULTS_VALUES.dragReverse,
     stopAtEdges: config.stopAtEdges ?? DEFAULTS_VALUES.stopAtEdges,
+    stopAtEdgesX: config.stopAtEdgesX ?? DEFAULTS_VALUES.stopAtEdgesX,
+    stopAtEdgesY: config.stopAtEdgesY ?? DEFAULTS_VALUES.stopAtEdgesY,
     imageInfo: config.imageInfo ?? DEFAULTS_VALUES.imageInfo,
     initialIconShown: config.initialIconShown ?? DEFAULTS_VALUES.initialIconShown,
     bottomCircle: config.bottomCircle ?? DEFAULTS_VALUES.bottomCircle,
