@@ -1276,12 +1276,14 @@ class CI360Viewer {
     if (!this.initialIcon || this.hasInteracted) return;
 
     this.initialIcon.style.opacity = 1;
+    this.initialIcon.style.pointerEvents = 'auto';
   }
 
   hideInitialIcon() {
     if (!this.initialIcon) return;
 
     this.initialIcon.style.opacity = 0;
+    this.initialIcon.style.pointerEvents = 'none';
   }
 
   addFullscreenIcon() {
@@ -1894,9 +1896,14 @@ class CI360Viewer {
       this.container.classList.add('ci360-hotspot-marker-inverted');
     } else if (markerTheme === 'brand') {
       this.container.classList.add('ci360-hotspot-marker-brand');
-      if (brandColor) {
-        this.container.style.setProperty('--ci360-hotspot-brand-color', brandColor);
-      }
+    }
+
+    // Always set brand color variable when provided, even if global markerTheme != 'brand'
+    // (per-hotspot markerTheme: 'brand' markers need it)
+    if (brandColor) {
+      this.container.style.setProperty('--ci360-hotspot-brand-color', brandColor);
+    } else {
+      this.container.style.removeProperty('--ci360-hotspot-brand-color');
     }
 
     // Event callbacks

@@ -47,7 +47,7 @@ declare module CI360 {
     theme?: 'light' | 'dark' | null; // Default: null
     markerTheme?: 'default' | 'inverted' | 'brand' | null; // Default: null
     brandColor?: string | null; // Default: null
-    hotspots?: any[] | null; // Default: null
+    hotspots?: Array<{ markerTheme?: 'default' | 'inverted' | 'brand'; [key: string]: any }> | null; // Default: null
     hotspotTrigger?: 'hover' | 'click'; // Default: 'hover'
     hotspotTimelineOnClick?: boolean; // Default: true
     aspectRatio?: string | null; // Default: null — CSS container aspect-ratio e.g. "16 / 9"

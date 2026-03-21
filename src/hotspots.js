@@ -216,15 +216,31 @@ class Hotspot {
   }
 
   createHotspot(hotspot) {
-    const { id, keepOpen, onClick, label, markerStyle, navigateTo: rawNavigateTo } = hotspot;
+    const { id, keepOpen, onClick, label, markerStyle, markerTheme, className, navigateTo: rawNavigateTo, arrowDirection } = hotspot;
     const navigateTo = typeof rawNavigateTo === 'string' ? rawNavigateTo.trim() : undefined;
     const content = renderPopoverContent(hotspot);
     const hotspotElement = createHotspotElement(id, label, markerStyle);
+
+    if (className) {
+      hotspotElement.classList.add(...className.split(/\s+/).filter(Boolean));
+    }
+
+    // Per-marker theme override
+    if (markerTheme === 'inverted') {
+      hotspotElement.classList.add('ci360-hotspot-marker--theme-inverted');
+    } else if (markerTheme === 'brand') {
+      hotspotElement.classList.add('ci360-hotspot-marker--theme-brand');
+    }
 
     // Navigation hotspot — styled as a navigate pin
     if (navigateTo) {
       hotspotElement.classList.add('cloudimage-360-hotspot--navigate');
       hotspotElement.innerHTML = NAVIGATE_ICON;
+      // Apply arrow rotation if specified
+      if (arrowDirection != null && Number.isFinite(arrowDirection)) {
+        const icon = hotspotElement.querySelector('.ci360-navigate-icon');
+        if (icon) icon.style.transform = `rotate(${arrowDirection}deg)`;
+      }
       const sceneLabel = label || navigateTo;
       hotspotElement.setAttribute('role', 'button');
       hotspotElement.setAttribute('aria-label', `Navigate to ${sceneLabel}`);
@@ -365,9 +381,12 @@ class Hotspot {
    */
   showHotspotById(hotspotId) {
     const hotspotConfig = this.hotspotsConfig.find((h) => h.id === hotspotId);
-    if (!hotspotConfig || hotspotConfig.navigateTo) return;
+    if (!hotspotConfig) return;
 
-    const content = renderPopoverContent(hotspotConfig);
+    const isNav = typeof hotspotConfig.navigateTo === 'string' && hotspotConfig.navigateTo.trim();
+    const content = isNav
+      ? renderPopoverContent(hotspotConfig) || (hotspotConfig.label ? renderPopoverContent({ data: { title: hotspotConfig.label } }) : '')
+      : renderPopoverContent(hotspotConfig);
     if (!content) return;
 
     const hotspotElement = this.hotspotsContainer.querySelector(`[data-hotspot-id="${hotspotId}"]`);
@@ -380,7 +399,7 @@ class Hotspot {
       hotspotElement,
       content,
       id: hotspotId,
-      keepOpen: hotspotConfig.keepOpen,
+      keepOpen: isNav ? false : hotspotConfig.keepOpen,
     });
   }
 

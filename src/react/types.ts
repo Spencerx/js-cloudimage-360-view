@@ -81,8 +81,16 @@ export interface Hotspot {
   content?: string;
   data?: PopoverData;
   className?: string;
+  /** If true, the popover stays open until explicitly closed. */
+  keepOpen?: boolean;
+  /** Custom click handler for the hotspot. */
+  onClick?: (event: MouseEvent, popperInstance: any, hotspotId: string) => void;
+  /** Per-hotspot marker theme override. */
+  markerTheme?: MarkerTheme;
   /** Scene ID to navigate to when this hotspot is clicked. Turns the hotspot into a navigation pin. */
   navigateTo?: string;
+  /** Rotation angle (degrees) for the navigation arrow icon. 0 = default right-pointing arrow. Only applies when navigateTo is set. */
+  arrowDirection?: number;
 }
 
 /**

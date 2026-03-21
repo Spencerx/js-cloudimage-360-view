@@ -154,6 +154,8 @@
   --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.8);
   --ci360-hotspot-marker-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --ci360-hotspot-pulse-color: rgba(0, 0, 0, 0.2);
+  --ci360-hotspot-navigate-bg: rgba(0, 0, 0, 0.6);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.8);
 }
 
 .ci360-theme-dark.ci360-hotspot-marker-inverted {
@@ -161,6 +163,8 @@
   --ci360-hotspot-marker-color: #1a1a1a;
   --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.4);
   --ci360-hotspot-pulse-color: rgba(255, 255, 255, 0.2);
+  --ci360-hotspot-navigate-bg: rgba(255, 255, 255, 0.8);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Brand Marker Theme — uses brand accent color */
@@ -170,6 +174,53 @@
   --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.9);
   --ci360-hotspot-marker-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   --ci360-hotspot-pulse-color: var(--ci360-hotspot-brand-color);
+  --ci360-hotspot-navigate-bg: var(--ci360-hotspot-brand-color);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.9);
+}
+
+.ci360-theme-dark.ci360-hotspot-marker-brand {
+  --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.6);
+  --ci360-hotspot-marker-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Per-marker theme overrides (take precedence over container-level).
+   Also override --ci360-hotspot-navigate-bg/border-color so navigation
+   markers (which read those variables instead of --ci360-hotspot-marker-bg)
+   pick up the per-marker theme too. */
+.ci360-hotspot-marker--theme-inverted {
+  --ci360-hotspot-marker-bg: rgba(0, 0, 0, 0.6);
+  --ci360-hotspot-marker-color: #ffffff;
+  --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.8);
+  --ci360-hotspot-marker-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --ci360-hotspot-pulse-color: rgba(0, 0, 0, 0.2);
+  --ci360-hotspot-navigate-bg: rgba(0, 0, 0, 0.6);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.8);
+}
+
+.ci360-theme-dark .ci360-hotspot-marker--theme-inverted {
+  --ci360-hotspot-marker-bg: rgba(255, 255, 255, 0.8);
+  --ci360-hotspot-marker-color: #1a1a1a;
+  --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.4);
+  --ci360-hotspot-pulse-color: rgba(255, 255, 255, 0.2);
+  --ci360-hotspot-navigate-bg: rgba(255, 255, 255, 0.8);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ci360-hotspot-marker--theme-brand {
+  --ci360-hotspot-marker-bg: var(--ci360-hotspot-brand-color, #00aaff);
+  --ci360-hotspot-marker-color: #ffffff;
+  --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.9);
+  --ci360-hotspot-marker-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --ci360-hotspot-pulse-color: var(--ci360-hotspot-brand-color, #00aaff);
+  --ci360-hotspot-navigate-bg: var(--ci360-hotspot-brand-color, #00aaff);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.9);
+}
+
+.ci360-theme-dark .ci360-hotspot-marker--theme-brand {
+  --ci360-hotspot-marker-border-color: rgba(255, 255, 255, 0.6);
+  --ci360-hotspot-marker-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --ci360-hotspot-navigate-border-color: rgba(255, 255, 255, 0.6);
 }
 
 /* ============================================
