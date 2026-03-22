@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
-import { CI360Viewer, CI360ViewerRef } from 'js-cloudimage-360-view/react';
-import 'js-cloudimage-360-view/css';
+import { CI360Viewer, CI360ViewerRef } from '@cloudimage/360-view/react';
+import '@cloudimage/360-view/css';
 
 // Example 1: Basic viewer with autoplay
 function BasicExample() {
@@ -184,7 +184,7 @@ export default function App() {
 
       <footer>
         <a
-          href="https://github.com/scaleflex/js-cloudimage-360-view"
+          href="https://github.com/scaleflex/@cloudimage/360-view"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -192,7 +192,7 @@ export default function App() {
         </a>
         <span>|</span>
         <a
-          href="https://scaleflex.github.io/js-cloudimage-360-view/"
+          href="https://scaleflex.github.io/cloudimage-360-view/"
           target="_blank"
           rel="noopener noreferrer"
         >

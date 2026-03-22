@@ -19,8 +19,8 @@ import type {
  *
  * @example
  * ```tsx
- * import { CI360Viewer } from 'js-cloudimage-360-view/react';
- * import 'js-cloudimage-360-view/css';
+ * import { CI360Viewer } from '@cloudimage/360-view/react';
+ * import '@cloudimage/360-view/css';
  *
  * function ProductView() {
  *   return (
@@ -38,7 +38,7 @@ import type {
  * @example With ref for imperative control
  * ```tsx
  * import { useRef } from 'react';
- * import { CI360Viewer, CI360ViewerRef } from 'js-cloudimage-360-view/react';
+ * import { CI360Viewer, CI360ViewerRef } from '@cloudimage/360-view/react';
  *
  * function ProductView() {
  *   const viewerRef = useRef<CI360ViewerRef>(null);

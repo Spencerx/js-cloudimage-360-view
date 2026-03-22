@@ -1,4 +1,4 @@
-# Contributing to js-cloudimage-360-view
+# Contributing to @cloudimage/360-view
 
 ## Development Setup
 
@@ -72,8 +72,8 @@ npm run publish
 ```
 
 This deploys both demos:
-- Main demo: https://scaleflex.github.io/js-cloudimage-360-view/
-- React demo: https://scaleflex.github.io/js-cloudimage-360-view/react-demo/
+- Main demo: https://scaleflex.github.io/cloudimage-360-view/
+- React demo: https://scaleflex.github.io/cloudimage-360-view/react-demo/
 
 ## Publishing to npm
 
@@ -107,7 +107,7 @@ npm version major
 
 After bumping the version, update the hardcoded version in the CodeSandbox examples:
 
-- `codesandbox/react/package.json` — `js-cloudimage-360-view` dependency version
+- `codesandbox/react/package.json` — `@cloudimage/360-view` dependency version
 - `codesandbox/vanilla/index.html` — CDN script URL version and display version text
 
 ### 4. Publish
@@ -116,8 +116,8 @@ After bumping the version, update the hardcoded version in the CodeSandbox examp
 # Login to npm (if not already)
 npm login
 
-# Publish to npm
-npm publish
+# Publish to npm (scoped packages need --access public for first publish)
+npm publish --access public
 
 # Push version tag to git
 git push && git push --tags
@@ -144,13 +144,13 @@ gh release create v4.x.x --title "v4.x.x" --notes ""
 gh release create v4.x.x --title "v4.x.x" --generate-notes
 ```
 
-View releases at: https://github.com/scaleflex/js-cloudimage-360-view/releases
+View releases at: https://github.com/scaleflex/cloudimage-360-view/releases
 
 ### Package Contents
 
 The npm package includes:
-- `dist/js-cloudimage-360-view.min.js` - Main UMD bundle
-- `dist/js-cloudimage-360-view.min.css` - Styles
+- `dist/360-view.min.js` - Main UMD bundle
+- `dist/360-view.min.css` - Styles
 - `dist/react/` - React module (ESM + CJS)
 - `src/types/` - TypeScript definitions
 

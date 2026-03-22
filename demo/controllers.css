@@ -37,11 +37,11 @@
 }
 
 .cloudimage-360 .cloudimage-360-left:before {
-  background-image: url('https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/assets/img/arrow-left.svg');
+  background-image: url('https://cdn.scaleflex.it/plugins/cloudimage-360-view/assets/img/arrow-left.svg');
 }
 
 .cloudimage-360 .cloudimage-360-right:before {
-  background-image: url('https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/assets/img/arrow-right.svg');
+  background-image: url('https://cdn.scaleflex.it/plugins/cloudimage-360-view/assets/img/arrow-right.svg');
 }
 
 .cloudimage-360 .cloudimage-360-left.not-active,
@@ -92,11 +92,11 @@
 }
 
 .cloudimage-360 .cloudimage-360-top:before {
-  background-image: url('https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/assets/img/arrow-left.svg');
+  background-image: url('https://cdn.scaleflex.it/plugins/cloudimage-360-view/assets/img/arrow-left.svg');
 }
 
 .cloudimage-360 .cloudimage-360-bottom:before {
-  background-image: url('https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/assets/img/arrow-right.svg');
+  background-image: url('https://cdn.scaleflex.it/plugins/cloudimage-360-view/assets/img/arrow-right.svg');
 }
 
 .cloudimage-360 .cloudimage-360-top.not-active,

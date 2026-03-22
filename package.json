@@ -1,10 +1,10 @@
 {
-  "name": "js-cloudimage-360-view",
+  "name": "@cloudimage/360-view",
   "version": "4.9.5",
-  "main": "dist/js-cloudimage-360-view.min.js",
+  "main": "dist/360-view.min.js",
   "types": "src/types/ci360.d.ts",
   "files": [
-    "dist/js-cloudimage-360-view.min.js",
+    "dist/360-view.min.js",
     "dist/react",
     "src/types",
     "src/react/types.d.ts"
@@ -12,8 +12,8 @@
   "exports": {
     ".": {
       "types": "./src/types/ci360.d.ts",
-      "import": "./dist/js-cloudimage-360-view.min.js",
-      "require": "./dist/js-cloudimage-360-view.min.js"
+      "import": "./dist/360-view.min.js",
+      "require": "./dist/360-view.min.js"
     },
     "./css": "./dist/react/style.css",
     "./react": {
@@ -23,15 +23,15 @@
     }
   },
   "style": "dist/react/style.css",
-  "module": "dist/js-cloudimage-360-view.min.js",
+  "module": "dist/360-view.min.js",
   "description": "",
   "author": "scaleflex",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scaleflex/js-cloudimage-360-view"
+    "url": "https://github.com/scaleflex/cloudimage-360-view"
   },
-  "homepage": "https://scaleflex.github.io/js-cloudimage-360-view/",
+  "homepage": "https://github.com/scaleflex/cloudimage-360-view",
   "keywords": [
     "image",
     "images",

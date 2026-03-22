@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360 Grid Example</title>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px; background: #f5f5f5; }
+        .viewer { width: 100%; max-width: 500px; aspect-ratio: 1 / 1; }
+        h2 { margin: 0; font-family: system-ui, sans-serif; color: #333; }
+    </style>
+</head>
+<body>
+
+<h2>1. Cloudimage</h2>
+<div id="viewer-cdn" class="cloudimage-360 viewer"></div>
+
+<h2>2. Filerobot</h2>
+<div id="viewer-filerobot" class="cloudimage-360 viewer"></div>
+
+<script src="https://scaleflex.cloudimg.io/v7/plugins/cloudimage/360-view/latest/360-view.min.js?func=proxy"></script>
+<script>
+    // Example 1: Using ciToken — builds CDN URL like:
+    // https://xa0wdi7s6t.cloudimg.io/v7/test_spin_full/..._002_024.jpg?width=1200
+    window.CI360.init(document.getElementById('viewer-cdn'), {
+        folder: '/test_spin_full/',
+        filenameGrid: '20000064001612d_2d_{indexY}_{indexX}.jpg',
+        amountX: 24,
+        amountY: 4,
+        indexZeroBase: 3,
+        ciToken: 'xa0wdi7s6t',
+        stopAtEdgesY: true,
+    });
+
+    // Example 2: Using Filerobot URL directly — builds URL like:
+    // https://xa0wdi7s6t.filerobot.com/test_spin_full/..._002_024.jpg
+    window.CI360.init(document.getElementById('viewer-filerobot'), {
+        folder: 'https://xa0wdi7s6t.filerobot.com/test_spin_full/',
+        filenameGrid: '20000064001612d_2d_{indexY}_{indexX}.jpg',
+        amountX: 24,
+        amountY: 4,
+        indexZeroBase: 3,
+        stopAtEdgesY: true,
+    });
+</script>
+
+</body>
+</html>

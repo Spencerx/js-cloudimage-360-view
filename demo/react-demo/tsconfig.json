@@ -19,8 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "js-cloudimage-360-view/react": ["../../src/react/index.ts"],
-      "js-cloudimage-360-view": ["../../src/index.js"]
+      "@cloudimage/360-view/react": ["../../src/react/index.ts"],
+      "@cloudimage/360-view": ["../../src/index.js"]
     }
   },
   "include": ["src/**/*"],

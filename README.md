@@ -4,21 +4,21 @@
   </a>
 </p>
 
-<h1 align="center">JS Cloudimage 360 View</h1>
+<h1 align="center">Cloudimage 360 View</h1>
 
 <p align="center">
   <strong>A powerful JavaScript library for creating interactive 360-degree product views</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/scaleflex/js-cloudimage-360-view/releases">
-    <img src="https://img.shields.io/github/v/release/scaleflex/js-cloudimage-360-view" alt="Release">
+  <a href="https://github.com/scaleflex/cloudimage-360-view/releases">
+    <img src="https://img.shields.io/github/v/release/scaleflex/cloudimage-360-view" alt="Release">
   </a>
-  <a href="https://img.shields.io/bundlephobia/min/js-cloudimage-360-view">
-    <img src="https://img.shields.io/bundlephobia/min/js-cloudimage-360-view" alt="Size">
+  <a href="https://img.shields.io/bundlephobia/min/@cloudimage/360-view">
+    <img src="https://img.shields.io/bundlephobia/min/@cloudimage/360-view" alt="Size">
   </a>
-  <a href="https://img.shields.io/npm/dt/js-cloudimage-360-view?logoColor=orange">
-    <img src="https://img.shields.io/npm/dt/js-cloudimage-360-view?logoColor=orange" alt="Downloads">
+  <a href="https://img.shields.io/npm/dt/@cloudimage/360-view?logoColor=orange">
+    <img src="https://img.shields.io/npm/dt/@cloudimage/360-view?logoColor=orange" alt="Downloads">
   </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
@@ -29,10 +29,10 @@
 </p>
 
 <p align="center">
-  <a href="https://scaleflex.github.io/js-cloudimage-360-view/">View Demo</a> ·
-  <a href="https://codesandbox.io/p/sandbox/github/scaleflex/js-cloudimage-360-view/tree/master/codesandbox/react">React CodeSandbox</a> ·
-  <a href="https://codesandbox.io/p/sandbox/github/scaleflex/js-cloudimage-360-view/tree/master/codesandbox/vanilla">Vanilla CodeSandbox</a> ·
-  <a href="https://github.com/scaleflex/js-cloudimage-360-view/issues">Report Bug</a>
+  <a href="https://scaleflex.github.io/cloudimage-360-view/">View Demo</a> ·
+  <a href="https://codesandbox.io/p/sandbox/github/scaleflex/cloudimage-360-view/tree/master/codesandbox/react">React CodeSandbox</a> ·
+  <a href="https://codesandbox.io/p/sandbox/github/scaleflex/cloudimage-360-view/tree/master/codesandbox/vanilla">Vanilla CodeSandbox</a> ·
+  <a href="https://github.com/scaleflex/cloudimage-360-view/issues">Report Bug</a>
 </p>
 
 ---
@@ -63,7 +63,7 @@
 
 ## Overview
 
-JS Cloudimage 360 View enables you to create stunning, interactive 360-degree product views for your website. Perfect for e-commerce platforms, virtual tours, and product showcases, it provides an immersive viewing experience that lets users explore products from every angle.
+Cloudimage 360 View enables you to create stunning, interactive 360-degree product views for your website. Perfect for e-commerce platforms, virtual tours, and product showcases, it provides an immersive viewing experience that lets users explore products from every angle.
 
 ### Why Choose This Library?
 
@@ -101,7 +101,7 @@ Add the library via CDN and create your first 360 viewer in seconds:
 
 ```html
 <!-- Add the library (CSS is auto-injected) -->
-<script src="https://scaleflex.cloudimg.io/v7/plugins/js-cloudimage-360-view/4.9.5/js-cloudimage-360-view.min.js?vh=44162f&func=proxy"></script>
+<script src="https://scaleflex.cloudimg.io/v7/plugins/cloudimage/360-view/4.9.5/360-view.min.js?vh=44162f&func=proxy"></script>
 
 <!-- Create a container with data attributes -->
 <div
@@ -125,7 +125,7 @@ Add the library via CDN and create your first 360 viewer in seconds:
 ### Option 1: CDN (Recommended for Quick Setup)
 
 ```html
-<script src="https://scaleflex.cloudimg.io/v7/plugins/js-cloudimage-360-view/4.9.5/js-cloudimage-360-view.min.js?vh=44162f&func=proxy"></script>
+<script src="https://scaleflex.cloudimg.io/v7/plugins/cloudimage/360-view/4.9.5/360-view.min.js?vh=44162f&func=proxy"></script>
 ```
 
 > **Note:** CSS is automatically injected by the script - no separate stylesheet needed.
@@ -134,20 +134,20 @@ Add the library via CDN and create your first 360 viewer in seconds:
 
 ```bash
 # npm
-npm install js-cloudimage-360-view
+npm install @cloudimage/360-view
 
 # yarn
-yarn add js-cloudimage-360-view
+yarn add @cloudimage/360-view
 
 # pnpm
-pnpm add js-cloudimage-360-view
+pnpm add @cloudimage/360-view
 ```
 
 Then import in your JavaScript:
 
 ```javascript
-import CI360 from 'js-cloudimage-360-view';
-import 'js-cloudimage-360-view/css';
+import CI360 from '@cloudimage/360-view';
+import '@cloudimage/360-view/css';
 ```
 
 ---
@@ -288,14 +288,14 @@ The library provides a React wrapper for seamless integration with React and Nex
 ### Installation
 
 ```bash
-npm install js-cloudimage-360-view
+npm install @cloudimage/360-view
 ```
 
 ### Basic Usage
 
 ```tsx
-import { CI360Viewer } from 'js-cloudimage-360-view/react';
-import 'js-cloudimage-360-view/css';
+import { CI360Viewer } from '@cloudimage/360-view/react';
+import '@cloudimage/360-view/css';
 
 function ProductView() {
   return (
@@ -318,8 +318,8 @@ Use a ref to control the viewer programmatically:
 
 ```tsx
 import { useRef } from 'react';
-import { CI360Viewer, CI360ViewerRef } from 'js-cloudimage-360-view/react';
-import 'js-cloudimage-360-view/css';
+import { CI360Viewer, CI360ViewerRef } from '@cloudimage/360-view/react';
+import '@cloudimage/360-view/css';
 
 function ProductView() {
   const viewerRef = useRef<CI360ViewerRef>(null);
@@ -359,7 +359,7 @@ function ProductView() {
 ### With Hotspots
 
 ```tsx
-import { CI360Viewer, Hotspot } from 'js-cloudimage-360-view/react';
+import { CI360Viewer, Hotspot } from '@cloudimage/360-view/react';
 
 const hotspots: Hotspot[] = [
   {
@@ -390,10 +390,10 @@ For Next.js applications, use dynamic import to disable server-side rendering:
 
 ```tsx
 import dynamic from 'next/dynamic';
-import 'js-cloudimage-360-view/css';
+import '@cloudimage/360-view/css';
 
 const CI360Viewer = dynamic(
-  () => import('js-cloudimage-360-view/react').then(mod => mod.CI360Viewer),
+  () => import('@cloudimage/360-view/react').then(mod => mod.CI360Viewer),
   { ssr: false }
 );
 
@@ -414,7 +414,7 @@ For advanced use cases, you can use the `useCI360` hook directly:
 
 ```tsx
 import { useRef } from 'react';
-import { useCI360 } from 'js-cloudimage-360-view/react';
+import { useCI360 } from '@cloudimage/360-view/react';
 
 function CustomViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -445,7 +445,7 @@ import type {
   CI360Config,
   SpinEventData,
   Hotspot,
-} from 'js-cloudimage-360-view/react';
+} from '@cloudimage/360-view/react';
 ```
 
 ---
@@ -1141,14 +1141,14 @@ For CDN users, CSS is now auto-injected (same as v3):
 
 ```html
 <!-- v4: Just include the script -->
-<script src=".../js-cloudimage-360-view.min.js"></script>
+<script src=".../360-view.min.js"></script>
 ```
 
 For npm/bundler users, import CSS separately:
 
 ```javascript
-import CI360 from 'js-cloudimage-360-view';
-import 'js-cloudimage-360-view/css';
+import CI360 from '@cloudimage/360-view';
+import '@cloudimage/360-view/css';
 ```
 
 #### 2. Initialization API Changed
@@ -1308,16 +1308,16 @@ const config = {
 
 We welcome contributions! Here's how you can help:
 
-- **[Report bugs](https://github.com/Scaleflex/js-cloudimage-360-view/issues)** - Found a bug? Let us know!
-- **[Request features](https://github.com/Scaleflex/js-cloudimage-360-view/issues)** - Have an idea? Share it!
-- **[Submit PRs](https://github.com/Scaleflex/js-cloudimage-360-view/pulls)** - Code contributions are welcome!
-- **[Join discussions](https://github.com/Scaleflex/js-cloudimage-360-view/discussions)** - Ask questions, share insights
+- **[Report bugs](https://github.com/scaleflex/cloudimage-360-view/issues)** - Found a bug? Let us know!
+- **[Request features](https://github.com/scaleflex/cloudimage-360-view/issues)** - Have an idea? Share it!
+- **[Submit PRs](https://github.com/scaleflex/cloudimage-360-view/pulls)** - Code contributions are welcome!
+- **[Join discussions](https://github.com/scaleflex/cloudimage-360-view/discussions)** - Ask questions, share insights
 
 ### Development Setup
 
 ```bash
-git clone https://github.com/Scaleflex/js-cloudimage-360-view.git
-cd js-cloudimage-360-view
+git clone https://github.com/scaleflex/cloudimage-360-view.git
+cd cloudimage-360-view
 npm install
 npm run dev
 ```
@@ -1325,8 +1325,8 @@ npm run dev
 <details>
 <summary><strong>Contributors</strong></summary>
 <br>
-<a href="https://github.com/Scaleflex/js-cloudimage-360-view/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Scaleflex/js-cloudimage-360-view" alt="Contributors">
+<a href="https://github.com/scaleflex/cloudimage-360-view/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=scaleflex/cloudimage-360-view" alt="Contributors">
 </a>
 </details>
 
@@ -1344,7 +1344,7 @@ If this library helped your project, consider buying me a coffee!
 
 ## License
 
-This project is licensed under the [MIT License]([https://opensource.org/licenses/MIT](https://github.com/scaleflex/js-cloudimage-360-view/blob/master/LICENSE)).
+This project is licensed under the [MIT License]([https://opensource.org/licenses/MIT](https://github.com/scaleflex/cloudimage-360-view/blob/master/LICENSE)).
 
 ---
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { CI360Viewer, CI360ViewerRef, SpinEventData } from 'js-cloudimage-360-view/react';
+import { CI360Viewer, CI360ViewerRef, SpinEventData } from '@cloudimage/360-view/react';
 // Import CI360 CSS
 import '../../../src/static/css/style.css';
 
